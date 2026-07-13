@@ -63,19 +63,31 @@ Respond with ONLY valid JSON in this exact format:
     
     const p = parsed;
     const isVerdictValid = ['AVOID', 'WATCH', 'ACCUMULATE', 'HIGH_CONVICTION'].includes(p.verdict);
-    const isEntryValid = p.entryZone?.low < p.entryZone?.high;
-    const isStopValid = p.stopLoss < p.entryZone?.low;
-    const isTPValid = p.takeProfits?.tp1 < p.takeProfits?.tp2 && p.takeProfits?.tp2 < p.takeProfits?.tp3;
-    const isTPAboveEntry = p.takeProfits?.tp1 > p.entryZone?.high;
+    
+    // For meme coins/AVOID verdicts, the AI might set TP to 0 or null.
+    // If the AI explicitly says AVOID, we accept it even if the trade levels make no sense.
+    let isValid = isVerdictValid;
+    
+    if (p.verdict !== 'AVOID') {
+      const isEntryValid = p.entryZone?.low <= p.entryZone?.high;
+      const isStopValid = p.stopLoss < p.entryZone?.low;
+      const isTPValid = p.takeProfits?.tp1 <= p.takeProfits?.tp2 && p.takeProfits?.tp2 <= p.takeProfits?.tp3;
+      const isTPAboveEntry = p.takeProfits?.tp1 > p.entryZone?.high;
+      isValid = isVerdictValid && isEntryValid && isStopValid && isTPValid && isTPAboveEntry;
+    }
 
-    if (isVerdictValid && isEntryValid && isStopValid && isTPValid && isTPAboveEntry) {
+    if (isValid) {
       return {
         verdict: p.verdict as any,
         verdictEmoji: p.verdictEmoji || '🟡',
         confidenceScore: Math.min(100, Math.max(0, p.confidenceScore || 50)),
-        entryZone: { low: p.entryZone.low, high: p.entryZone.high },
-        stopLoss: p.stopLoss,
-        takeProfits: { tp1: p.takeProfits.tp1, tp2: p.takeProfits.tp2, tp3: p.takeProfits.tp3 },
+        entryZone: { low: p.entryZone?.low || price*0.95, high: p.entryZone?.high || price*0.98 },
+        stopLoss: p.stopLoss || price*0.8,
+        takeProfits: { 
+           tp1: p.takeProfits?.tp1 || price*1.1, 
+           tp2: p.takeProfits?.tp2 || price*1.2, 
+           tp3: p.takeProfits?.tp3 || price*1.3 
+        },
         riskRewardRatio: p.riskRewardRatio || 'Unknown',
         reasoning: p.reasoning || 'Trade plan generated.'
       };

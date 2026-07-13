@@ -13,10 +13,20 @@ export async function resolveTokenData(input: string, chain?: string): Promise<N
     
     // 1. Try GeckoTerminal
     let data = await getGeckoMarketData(cleanInput);
-    if (data) return data;
     
     // 2. Try DexScreener
-    data = await searchDexScreener(cleanInput);
+    const dexData = await searchDexScreener(cleanInput);
+    
+    // Merge if necessary
+    if (data && (!data.marketCap || !data.liquidityUSD) && dexData && dexData.marketCap) {
+        data.marketCap = dexData.marketCap;
+        data.fullyDilutedValue = dexData.fullyDilutedValue;
+        data.liquidityUSD = dexData.liquidityUSD;
+        data.source = 'combined';
+    } else if (!data && dexData) {
+        data = dexData;
+    }
+
     if (data) return data;
     
     throw new Error('Token not found on any network. Please verify the contract address.');
