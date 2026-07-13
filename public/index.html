@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prism | Token Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="background-effects">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <img src="logo.svg" alt="Prism Logo" class="logo">
+            <h1>Prism</h1>
+            <p class="tagline">Raw data enters. Five clear intelligence signals exit.</p>
+            <span class="badge">Powered by OKX & Groq</span>
+        </header>
+
+        <main>
+            <div class="search-container glass-panel">
+                <input type="text" id="tokenInput" placeholder="Enter symbol (e.g. BTC) or contract address (0x...)" autocomplete="off">
+                <button id="searchBtn" class="btn-primary"><i class="fas fa-search"></i> Analyze</button>
+            </div>
+
+            <div class="results-grid">
+                <!-- Quick Check Panel -->
+                <div class="panel glass-panel" id="quickCheckPanel">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-bolt"></i> Quick Check</h2>
+                        <span class="price-tag free">FREE</span>
+                    </div>
+                    <div class="panel-body" id="quickCheckResult">
+                        <div class="placeholder-text">Enter a token to get a free risk snapshot.</div>
+                    </div>
+                </div>
+
+                <!-- Full Report Panel -->
+                <div class="panel glass-panel premium-glow" id="fullReportPanel">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-robot"></i> Full AI Strategy</h2>
+                        <span class="price-tag premium">$0.50 USDT</span>
+                    </div>
+                    <div class="panel-body" id="fullReportResult">
+                        <div class="placeholder-text">Unlock deep market analysis, risk evaluation, and an AI-driven trade plan.</div>
+                        <button id="unlockBtn" class="btn-premium hidden"><i class="fas fa-lock-open"></i> Pay & Unlock Report</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal" id="paymentModal">
+        <div class="modal-content glass-panel">
+            <h3><i class="fas fa-wallet"></i> OKX Web3 Wallet</h3>
+            <p>Signature Request: Authorize payment of <strong>$0.50 USDT</strong> for Prism Premium Report.</p>
+            <div class="modal-actions">
+                <button id="cancelPaymentBtn" class="btn-secondary">Reject</button>
+                <button id="confirmPaymentBtn" class="btn-primary">Sign & Pay</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

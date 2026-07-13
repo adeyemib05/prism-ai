@@ -1,0 +1,10 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Top Polygon (Cyan) -->
+  <polygon points="100,20 60,95 140,95" fill="#00D2FF" />
+  
+  <!-- Bottom Left Polygon (Medium Blue) -->
+  <polygon points="54.66,105 20,170 95,170 95,105" fill="#0077CC" />
+  
+  <!-- Bottom Right Polygon (Dark Blue) -->
+  <polygon points="145.34,105 180,170 105,170 105,105" fill="#1A237E" />
+</svg>
