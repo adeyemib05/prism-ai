@@ -36,6 +36,14 @@ export async function resolveTokenData(input: string, chain?: string): Promise<N
         okxData.fullyDilutedValue = geckoData.fullyDilutedValue;
         okxData.liquidityUSD = geckoData.liquidityUSD;
         okxData.source = 'combined';
+      } else {
+        const dexData = await searchDexScreener(cleanInput);
+        if (dexData) {
+          okxData.marketCap = dexData.marketCap;
+          okxData.fullyDilutedValue = dexData.fullyDilutedValue;
+          okxData.liquidityUSD = dexData.liquidityUSD;
+          okxData.source = 'combined';
+        }
       }
     } catch (e) {
       // Ignore enhancement errors
