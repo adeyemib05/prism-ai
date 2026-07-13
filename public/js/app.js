@@ -110,10 +110,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!data.success) throw new Error(data.error);
             
             // Render Markdown
-            fullReportResult.innerHTML = \`<div class="markdown-body">\${marked.parse(data.data.markdown)}</div>\`;
+            fullReportResult.innerHTML = `<div class="markdown-body">${marked.parse(data.data.markdown)}</div>`;
             
         } catch (error) {
-            fullReportResult.innerHTML = \`<div class="text-danger"><i class="fas fa-exclamation-circle"></i> Error: \${error.message}</div>\`;
+            fullReportResult.innerHTML = `<div class="text-danger"><i class="fas fa-exclamation-circle"></i> Error: ${error.message}</div>`;
             fullReportResult.appendChild(unlockBtn); // let them try again
             unlockBtn.classList.remove('hidden');
         }
