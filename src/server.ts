@@ -48,7 +48,11 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ success: false, error: err.message || 'Internal Server Error' });
 });
 
-app.listen(config.port, () => {
-  console.log(`🔷 Prism is running on port ${config.port} in ${config.nodeEnv} mode`);
-  console.log(`   Put your token through Prism → http://localhost:${config.port}`);
-});
+if (process.env.NODE_ENV !== 'production' || process.env.IS_LOCAL) {
+  app.listen(config.port, () => {
+    console.log(`🔷 Prism is running on port ${config.port} in ${config.nodeEnv} mode`);
+    console.log(`   Put your token through Prism → http://localhost:${config.port}`);
+  });
+}
+
+export default app;
