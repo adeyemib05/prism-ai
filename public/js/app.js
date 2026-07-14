@@ -153,6 +153,7 @@ var Analyze = (function() {
   function getReport() { return _report; }
   function getSymbol() { return _sym; }
   function getFuCount() { return _fuCount; }
+  function incFu() { _fuCount++; }
   function getHistId() { return _currentHistId; }
   return { run: run, unlock: unlock, getReport: getReport, getSymbol: getSymbol, getFuCount: getFuCount, incFu: incFu, getHistId: getHistId };
 })();
