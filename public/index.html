@@ -277,6 +277,12 @@ document.addEventListener('DOMContentLoaded', () => {
   Auth.init();
   History.updateBadge();
   Watchlist.updateBadge();
+  
+  // Load initial demo analysis for judges
+  if (typeof Analyze !== 'undefined') {
+    Analyze.loadDemo();
+  }
+  
   const ti = document.getElementById('topbarInput');
   if (ti) ti.addEventListener('keypress', e => {
     if (e.key === 'Enter') {

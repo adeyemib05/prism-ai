@@ -150,12 +150,48 @@ var Analyze = (function() {
     if (btn) btn.addEventListener('click', function() { FollowUp.askAnalyze(); });
   }
 
+  function loadDemo() {
+    _sym = 'BTC';
+    var qcData = {
+      symbol: 'BTC', price: 64450.00, change24h: 4.25, volume24h: 29500000000,
+      riskLevel: 'LOW', note: 'Major CEX token with massive liquidity. Low volatility risk.'
+    };
+    _renderQC(qcData);
+    
+    var demoMd = '### 🔎 Prism Intelligence: BTC\\n\\n' +
+      '**BTC** | Price: $64.45K | 24h: 🟢 +4.25%\\n\\n' +
+      '#### ⚠️ Risk Shield: LOW (Score: 12/100)\\n' +
+      'Bitcoin demonstrates massive liquidity and steady volume patterns, indicating institutional participation. No significant risk flags detected.\\n\\n' +
+      '#### 📊 Market Structure: BULLISH\\n' +
+      'The market structure indicates a continuation of the bullish trend. Price is holding above the critical $62K support with strong buying pressure absorbing minor pullbacks.\\n\\n' +
+      '- **Trend Strength:** 85/100\\n' +
+      '- **Volume Pattern:** NORMAL\\n' +
+      '- **Key Support:** $62,100\\n' +
+      '- **Key Resistance:** $66,500\\n\\n' +
+      '#### 🟢 AI Trade Plan: ACCUMULATE\\n' +
+      'With a low risk score and strong trend, accumulating on minor dips presents a favorable risk-to-reward setup.\\n\\n' +
+      '**Actionable Levels**\\n' +
+      '- **Entry Zone:** $63,000 - $64,000\\n' +
+      '- **Stop Loss:** $61,500\\n' +
+      '- **Take Profits:** TP1: $67,000 | TP2: $70,000\\n' +
+      '- **Risk/Reward:** 1:2.5';
+      
+    _report = { token: {symbol:'BTC', name:'Bitcoin'}, trade: {verdict:'ACCUMULATE'}, risk: {level:'LOW'}, markdown: demoMd };
+    _renderReport(_report);
+    
+    var ub = document.getElementById('unlockBanner');
+    if (ub) ub.classList.add('hidden');
+    
+    var inp = document.getElementById('analyzeInput');
+    if (inp) inp.value = 'BTC';
+  }
+
   function getReport() { return _report; }
   function getSymbol() { return _sym; }
   function getFuCount() { return _fuCount; }
   function incFu() { _fuCount++; }
   function getHistId() { return _currentHistId; }
-  return { run: run, unlock: unlock, getReport: getReport, getSymbol: getSymbol, getFuCount: getFuCount, incFu: incFu, getHistId: getHistId };
+  return { run: run, unlock: unlock, loadDemo: loadDemo, getReport: getReport, getSymbol: getSymbol, getFuCount: getFuCount, incFu: incFu, getHistId: getHistId };
 })();
 
 var Payment = (function() {
