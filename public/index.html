@@ -215,14 +215,33 @@
 
 <!-- PAYMENT MODAL -->
 <div class="modal-overlay" id="paymentModal">
-  <div class="modal-box" style="max-width:360px;text-align:center">
+  <div class="modal-box" style="max-width:380px;text-align:center">
     <button class="modal-close" onclick="Payment.cancel()"><i class="fas fa-times"></i></button>
-    <h3><i class="fas fa-wallet" style="color:var(--accent-primary)"></i> Signature Request</h3>
-    <div class="payment-amount" id="paymentAmount">$0.50</div>
-    <p class="payment-detail" id="paymentDetail">Authorise payment of $0.50 USDT for Prism Full Analysis Report.</p>
-    <div class="payment-actions">
-      <button class="btn btn-secondary btn-full" onclick="Payment.cancel()">Reject</button>
-      <button class="btn btn-primary btn-full" onclick="Payment.confirm()"><i class="fas fa-signature"></i> Sign &amp; Pay</button>
+    <h3><i class="fas fa-wallet" style="color:var(--accent-primary)"></i> L402 Payment Request</h3>
+    <div id="paymentViewInitial">
+      <div class="payment-amount" id="paymentAmount">$0.50</div>
+      <p class="payment-detail" id="paymentDetail">Authorise payment of $0.50 USDT for Prism Full Analysis Report.</p>
+      <div class="payment-actions" style="margin-top:1.5rem">
+        <button class="btn btn-secondary btn-full" onclick="Payment.cancel()">Cancel</button>
+        <button class="btn btn-primary btn-full" onclick="Payment.generateInvoice()"><i class="fas fa-bolt"></i> Generate Invoice</button>
+      </div>
+    </div>
+    
+    <div id="paymentViewInvoice" class="hidden">
+      <div style="background:#fff;padding:10px;border-radius:10px;width:180px;height:180px;margin:0 auto 1rem;">
+        <img id="invoiceQr" src="" alt="QR Code" style="width:100%;height:100%">
+      </div>
+      <div id="invoiceText" style="font-family:monospace;font-size:0.7rem;background:rgba(255,255,255,0.05);padding:0.5rem;border-radius:4px;word-break:break-all;margin-bottom:1rem;color:var(--text-muted)">
+      </div>
+      <div class="payment-actions">
+        <button class="btn btn-secondary btn-full" onclick="Payment.cancel()">Cancel</button>
+        <button class="btn btn-primary btn-full" id="btnConfirmPay" onclick="Payment.confirm()"><i class="fas fa-check-circle"></i> Complete Payment</button>
+      </div>
+    </div>
+    
+    <div id="paymentViewLoading" class="hidden" style="padding:2rem 0">
+      <div class="loader" style="width:40px;height:40px;border-width:4px;margin:0 auto 1rem"></div>
+      <div style="color:var(--text-muted)" id="paymentLoadingText">Awaiting network confirmation...</div>
     </div>
   </div>
 </div>

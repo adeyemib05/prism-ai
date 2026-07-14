@@ -160,20 +160,60 @@ var Analyze = (function() {
 
 var Payment = (function() {
   var _cb = null;
+  function resetViews() {
+    document.getElementById('paymentViewInitial').classList.remove('hidden');
+    document.getElementById('paymentViewInvoice').classList.add('hidden');
+    document.getElementById('paymentViewLoading').classList.add('hidden');
+    const btn = document.getElementById('btnConfirmPay');
+    if(btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check-circle"></i> Complete Payment'; }
+  }
+
   function request(amount, detail, cb) {
     _cb = cb;
+    resetViews();
     var amtEl = document.getElementById('paymentAmount');
     var detEl = document.getElementById('paymentDetail');
     if (amtEl) amtEl.textContent = '$' + Number(amount).toFixed(2);
     if (detEl) detEl.textContent = 'Authorise payment of $' + Number(amount).toFixed(2) + ' USDT for ' + detail + '.';
     document.getElementById('paymentModal').classList.add('active');
   }
-  function confirm() {
-    document.getElementById('paymentModal').classList.remove('active');
-    if (_cb) { var c = _cb; _cb = null; c(); }
+
+  function generateInvoice() {
+    document.getElementById('paymentViewInitial').classList.add('hidden');
+    document.getElementById('paymentViewLoading').classList.remove('hidden');
+    document.getElementById('paymentLoadingText').textContent = 'Generating L402 invoice...';
+    
+    // Generate a fake Lightning invoice string
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let rand = '';
+    for(let i=0; i<32; i++) rand += chars.charAt(Math.floor(Math.random() * chars.length));
+    const invoiceStr = 'lnbc500n1p3' + rand;
+    
+    document.getElementById('invoiceText').textContent = invoiceStr.substring(0, 24) + '... (L402 Mock Invoice)';
+    document.getElementById('invoiceQr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=' + invoiceStr;
+
+    setTimeout(() => {
+      document.getElementById('paymentViewLoading').classList.add('hidden');
+      document.getElementById('paymentViewInvoice').classList.remove('hidden');
+    }, 800);
   }
-  function cancel() { document.getElementById('paymentModal').classList.remove('active'); _cb = null; }
-  return { request: request, confirm: confirm, cancel: cancel };
+
+  function confirm() {
+    const btn = document.getElementById('btnConfirmPay');
+    if(btn) { btn.disabled = true; btn.innerHTML = '<span class="loader" style="width:14px;height:14px;border-width:2px;margin-right:8px"></span> Confirming...'; }
+    
+    setTimeout(() => {
+      document.getElementById('paymentModal').classList.remove('active');
+      if (_cb) { var c = _cb; _cb = null; c(); }
+    }, 1500);
+  }
+
+  function cancel() { 
+    document.getElementById('paymentModal').classList.remove('active'); 
+    _cb = null; 
+  }
+
+  return { request: request, generateInvoice: generateInvoice, confirm: confirm, cancel: cancel };
 })();
 
 var FollowUp = (function() {
