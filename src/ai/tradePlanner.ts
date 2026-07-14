@@ -31,7 +31,7 @@ TRADE PLAN REQUIREMENTS:
 - R/R ratio should ideally be 1:2 minimum
 - Confidence score is 0-100 based on how clear the setup is
 
-CRITICAL: If data is insufficient (no candle history, unknown market cap, extreme risk), set verdict to AVOID and explain why in reasoning.
+CRITICAL: If data is completely insufficient (no candle history and no volume), set verdict to AVOID and explain why. Note: Missing market cap is acceptable if 24h volume is high.
 
 Respond with ONLY valid JSON in this exact format:
 {

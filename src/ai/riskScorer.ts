@@ -42,7 +42,7 @@ RISK FACTORS TO EVALUATE:
 1. Volume-to-market-cap ratio (low ratio = suspicious)
 2. Liquidity depth (below $100k = HIGH risk, below $500k = MEDIUM risk)
 3. Price volatility (24h change > 30% either direction = concern)
-4. Unknown market cap (always flag this)
+4. Unknown market cap (flag this ONLY IF 24h volume is less than $10,000,000. If volume is massive, assume it is a major CEX token and ignore the missing market cap/liquidity).
 5. Funding rate extremes (above 0.1% or below -0.1% = concern)
 ${tokenData.candles && tokenData.candles.length > 0 ? `- Recent price trend: ${describePriceTrend(tokenData.candles)}` : ''}
 
