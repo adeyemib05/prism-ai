@@ -214,60 +214,57 @@ var Analyze = (function() {
 
 var Payment = (function() {
   var _cb = null;
-  function resetViews() {
-    document.getElementById('paymentViewInitial').classList.remove('hidden');
-    document.getElementById('paymentViewInvoice').classList.add('hidden');
-    document.getElementById('paymentViewLoading').classList.add('hidden');
-    const btn = document.getElementById('btnConfirmPay');
-    if(btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check-circle"></i> Complete Payment'; }
+
+  function _genNonce() {
+    var hex = '0x';
+    var chars = '0123456789abcdef';
+    for (var i = 0; i < 16; i++) hex += chars[Math.floor(Math.random() * 16)];
+    return hex;
   }
 
   function request(amount, detail, cb) {
     _cb = cb;
-    resetViews();
+    // Reset views
+    var vi = document.getElementById('paymentViewInitial');
+    var vl = document.getElementById('paymentViewLoading');
+    if (vi) vi.classList.remove('hidden');
+    if (vl) vl.classList.add('hidden');
+    var btn = document.getElementById('btnConfirmPay');
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-signature"></i> Sign &amp; Authorise'; }
+
     var amtEl = document.getElementById('paymentAmount');
     var detEl = document.getElementById('paymentDetail');
-    if (amtEl) amtEl.textContent = '$' + Number(amount).toFixed(2);
-    if (detEl) detEl.textContent = 'Authorise payment of $' + Number(amount).toFixed(2) + ' USDT for ' + detail + '.';
+    var symEl = document.getElementById('paymentSymbol');
+    var nonceEl = document.getElementById('paymentNonce');
+    if (amtEl) amtEl.textContent = '$' + Number(amount).toFixed(2) + ' USDT';
+    if (detEl) detEl.textContent = detail;
+    if (symEl) symEl.textContent = (typeof Analyze !== 'undefined') ? (Analyze.getSymbol() || '—') : '—';
+    if (nonceEl) nonceEl.textContent = _genNonce();
     document.getElementById('paymentModal').classList.add('active');
   }
 
-  function generateInvoice() {
-    document.getElementById('paymentViewInitial').classList.add('hidden');
-    document.getElementById('paymentViewLoading').classList.remove('hidden');
-    document.getElementById('paymentLoadingText').textContent = 'Generating L402 invoice...';
-    
-    // Generate a fake Lightning invoice string
-    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    let rand = '';
-    for(let i=0; i<32; i++) rand += chars.charAt(Math.floor(Math.random() * chars.length));
-    const invoiceStr = 'lnbc500n1p3' + rand;
-    
-    document.getElementById('invoiceText').textContent = invoiceStr.substring(0, 24) + '... (L402 Mock Invoice)';
-    document.getElementById('invoiceQr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=' + invoiceStr;
-
+  function confirm() {
+    var btn = document.getElementById('btnConfirmPay');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<span class="loader" style="width:13px;height:13px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:7px"></span> Signing...'; }
+    var vi = document.getElementById('paymentViewInitial');
+    var vl = document.getElementById('paymentViewLoading');
     setTimeout(() => {
-      document.getElementById('paymentViewLoading').classList.add('hidden');
-      document.getElementById('paymentViewInvoice').classList.remove('hidden');
+      if (vi) vi.classList.add('hidden');
+      if (vl) vl.classList.remove('hidden');
+      document.getElementById('paymentLoadingText').textContent = 'Verifying authorisation on L402 network...';
+      setTimeout(() => {
+        document.getElementById('paymentModal').classList.remove('active');
+        if (_cb) { var c = _cb; _cb = null; c(); }
+      }, 1200);
     }, 800);
   }
 
-  function confirm() {
-    const btn = document.getElementById('btnConfirmPay');
-    if(btn) { btn.disabled = true; btn.innerHTML = '<span class="loader" style="width:14px;height:14px;border-width:2px;margin-right:8px"></span> Confirming...'; }
-    
-    setTimeout(() => {
-      document.getElementById('paymentModal').classList.remove('active');
-      if (_cb) { var c = _cb; _cb = null; c(); }
-    }, 1500);
+  function cancel() {
+    document.getElementById('paymentModal').classList.remove('active');
+    _cb = null;
   }
 
-  function cancel() { 
-    document.getElementById('paymentModal').classList.remove('active'); 
-    _cb = null; 
-  }
-
-  return { request: request, generateInvoice: generateInvoice, confirm: confirm, cancel: cancel };
+  return { request: request, confirm: confirm, cancel: cancel };
 })();
 
 var FollowUp = (function() {

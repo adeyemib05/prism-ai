@@ -217,31 +217,77 @@
 <div class="modal-overlay" id="paymentModal">
   <div class="modal-box" style="max-width:380px;text-align:center">
     <button class="modal-close" onclick="Payment.cancel()"><i class="fas fa-times"></i></button>
-    <h3><i class="fas fa-wallet" style="color:var(--accent-primary)"></i> L402 Payment Request</h3>
     <div id="paymentViewInitial">
-      <div class="payment-amount" id="paymentAmount">$0.50</div>
-      <p class="payment-detail" id="paymentDetail">Authorise payment of $0.50 USDT for Prism Full Analysis Report.</p>
-      <div class="payment-actions" style="margin-top:1.5rem">
-        <button class="btn btn-secondary btn-full" onclick="Payment.cancel()">Cancel</button>
-        <button class="btn btn-primary btn-full" onclick="Payment.generateInvoice()"><i class="fas fa-bolt"></i> Generate Invoice</button>
+      <div style="width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,rgba(0,194,255,0.15),rgba(123,97,255,0.15));border:1.5px solid var(--border-accent);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.5rem;">✍️</div>
+      <h3 style="margin-bottom:0.3rem">Signature Request</h3>
+      <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:1.2rem">Prism AI &bull; <span id="paymentNetwork">L402 Protocol</span></p>
+      <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:1rem;text-align:left;margin-bottom:1.2rem">
+        <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.08em">You are authorising</div>
+        <div style="font-size:0.95rem;font-weight:700;color:var(--text-primary)" id="paymentDetail">Full AI Analysis Report</div>
+        <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.3rem">Token: <strong id="paymentSymbol" style="color:var(--accent-primary)">—</strong></div>
+        <div style="margin-top:0.8rem;padding-top:0.8rem;border-top:1px solid var(--border-subtle);display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:0.78rem;color:var(--text-muted)">Amount</span>
+          <span class="payment-amount" id="paymentAmount" style="font-size:1.1rem;margin:0">$0.50 USDT</span>
+        </div>
+        <div style="margin-top:0.5rem;display:flex;justify-content:space-between">
+          <span style="font-size:0.72rem;color:var(--text-muted)">Nonce</span>
+          <span style="font-size:0.72rem;font-family:monospace;color:var(--text-muted)" id="paymentNonce">0x...</span>
+        </div>
       </div>
-    </div>
-    
-    <div id="paymentViewInvoice" class="hidden">
-      <div style="background:#fff;padding:10px;border-radius:10px;width:180px;height:180px;margin:0 auto 1rem;">
-        <img id="invoiceQr" src="" alt="QR Code" style="width:100%;height:100%">
-      </div>
-      <div id="invoiceText" style="font-family:monospace;font-size:0.7rem;background:rgba(255,255,255,0.05);padding:0.5rem;border-radius:4px;word-break:break-all;margin-bottom:1rem;color:var(--text-muted)">
-      </div>
+      <p style="font-size:0.72rem;color:var(--text-muted);margin-bottom:1rem">Signing does not execute a blockchain transaction. It authorises Prism to generate your personalised report.</p>
       <div class="payment-actions">
-        <button class="btn btn-secondary btn-full" onclick="Payment.cancel()">Cancel</button>
-        <button class="btn btn-primary btn-full" id="btnConfirmPay" onclick="Payment.confirm()"><i class="fas fa-check-circle"></i> Complete Payment</button>
+        <button class="btn btn-secondary btn-full" onclick="Payment.cancel()">Reject</button>
+        <button class="btn btn-primary btn-full" id="btnConfirmPay" onclick="Payment.confirm()"><i class="fas fa-signature"></i> Sign &amp; Authorise</button>
       </div>
     </div>
-    
-    <div id="paymentViewLoading" class="hidden" style="padding:2rem 0">
-      <div class="loader" style="width:40px;height:40px;border-width:4px;margin:0 auto 1rem"></div>
-      <div style="color:var(--text-muted)" id="paymentLoadingText">Awaiting network confirmation...</div>
+    <div id="paymentViewLoading" class="hidden" style="padding:2.5rem 0">
+      <div class="loader" style="width:36px;height:36px;border-width:3px;margin:0 auto 1rem"></div>
+      <div style="color:var(--text-primary);font-weight:600;margin-bottom:0.3rem">Processing signature</div>
+      <div style="color:var(--text-muted);font-size:0.8rem" id="paymentLoadingText">Verifying authorisation...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ONBOARDING OVERLAY -->
+<div class="onboarding-overlay" id="onboardingOverlay">
+  <div class="onboarding-box">
+    <div class="onboarding-step active" id="ob-step-1">
+      <div class="onboarding-step-num">Step 1 of 3</div>
+      <div class="onboarding-title">Welcome to Prism 🔮</div>
+      <div class="onboarding-desc">
+        Prism gives you <strong>institutional-grade AI analysis</strong> for any crypto token in seconds.<br><br>
+        Just type a symbol like <strong>BTC</strong>, <strong>ETH</strong>, or paste a contract address. The free <strong>Quick Check</strong> gives you a risk snapshot instantly.
+      </div>
+    </div>
+    <div class="onboarding-step" id="ob-step-2">
+      <div class="onboarding-step-num">Step 2 of 3</div>
+      <div class="onboarding-title">Unlock Full AI Strategy 🤖</div>
+      <div class="onboarding-desc">
+        After the Quick Check, unlock the <strong>Full AI Strategy</strong> for just <strong>$0.50 USDT</strong>.<br><br>
+        You get a complete trade plan: Risk Shield, Market Structure, Entry Zone, Stop Loss, and Take Profit levels — all generated in ~5 seconds.
+      </div>
+    </div>
+    <div class="onboarding-step" id="ob-step-3">
+      <div class="onboarding-step-num">Step 3 of 3</div>
+      <div class="onboarding-title">Try it now ✨</div>
+      <div class="onboarding-desc">
+        Click a token below to run your first free Quick Check, or type any symbol in the search bar.
+        <div style="margin-top:1rem;display:flex;flex-wrap:wrap;gap:0.5rem">
+          <span class="onboarding-demo-token" onclick="Onboarding.tryToken('BTC')"><i class="fas fa-bolt"></i> BTC</span>
+          <span class="onboarding-demo-token" onclick="Onboarding.tryToken('ETH')"><i class="fas fa-bolt"></i> ETH</span>
+          <span class="onboarding-demo-token" onclick="Onboarding.tryToken('SOL')"><i class="fas fa-bolt"></i> SOL</span>
+          <span class="onboarding-demo-token" onclick="Onboarding.tryToken('PEPE')"><i class="fas fa-bolt"></i> PEPE</span>
+        </div>
+      </div>
+    </div>
+    <div class="onboarding-nav">
+      <div class="onboarding-dots">
+        <div class="onboarding-dot active" id="ob-dot-1"></div>
+        <div class="onboarding-dot" id="ob-dot-2"></div>
+        <div class="onboarding-dot" id="ob-dot-3"></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="Onboarding.skip()">Skip</button>
+      <button class="btn btn-primary btn-sm" id="obNextBtn" onclick="Onboarding.next()">Next <i class="fas fa-arrow-right"></i></button>
     </div>
   </div>
 </div>
@@ -277,12 +323,8 @@ document.addEventListener('DOMContentLoaded', () => {
   Auth.init();
   History.updateBadge();
   Watchlist.updateBadge();
-  
-  // Load initial demo analysis for judges
-  if (typeof Analyze !== 'undefined') {
-    Analyze.loadDemo();
-  }
-  
+  Onboarding.init();
+
   const ti = document.getElementById('topbarInput');
   if (ti) ti.addEventListener('keypress', e => {
     if (e.key === 'Enter') {
@@ -297,6 +339,61 @@ document.addEventListener('DOMContentLoaded', () => {
   const ai = document.getElementById('analyzeInput');
   if (ai) ai.addEventListener('keypress', e => { if (e.key === 'Enter') Analyze.run(); });
 });
+</script>
+
+<script>
+var Onboarding = (function() {
+  var _step = 1;
+  var _total = 3;
+
+  function init() {
+    if (localStorage.getItem('prism_onboarded')) {
+      document.getElementById('onboardingOverlay').classList.add('hidden');
+      return;
+    }
+    _showStep(1);
+  }
+
+  function _showStep(n) {
+    for (var i = 1; i <= _total; i++) {
+      var s = document.getElementById('ob-step-' + i);
+      var d = document.getElementById('ob-dot-' + i);
+      if (s) s.classList.toggle('active', i === n);
+      if (d) d.classList.toggle('active', i === n);
+    }
+    var btn = document.getElementById('obNextBtn');
+    if (btn) {
+      if (n === _total) {
+        btn.innerHTML = 'Get Started <i class="fas fa-rocket"></i>';
+      } else {
+        btn.innerHTML = 'Next <i class="fas fa-arrow-right"></i>';
+      }
+    }
+    _step = n;
+  }
+
+  function next() {
+    if (_step < _total) {
+      _showStep(_step + 1);
+    } else {
+      skip();
+    }
+  }
+
+  function skip() {
+    localStorage.setItem('prism_onboarded', '1');
+    document.getElementById('onboardingOverlay').classList.add('hidden');
+  }
+
+  function tryToken(sym) {
+    skip();
+    navigate('analyze');
+    document.getElementById('analyzeInput').value = sym;
+    Analyze.run();
+  }
+
+  return { init: init, next: next, skip: skip, tryToken: tryToken };
+})();
 </script>
 </body>
 </html>
