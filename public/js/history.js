@@ -19,6 +19,17 @@ var History = (function() {
     var b = document.getElementById('historyBadge');
     if (b) b.textContent = getAll().length;
   }
+  function addChat(id, msg) {
+    var all = getAll();
+    for (var i = 0; i < all.length; i++) {
+      if (all[i].id === id) {
+        all[i].chat = all[i].chat || [];
+        all[i].chat.push(msg);
+        break;
+      }
+    }
+    localStorage.setItem(_key(), JSON.stringify(all));
+  }
   var _filter = '';
   function filter(q) { _filter = q; render(); }
   function render() {
@@ -73,6 +84,20 @@ var History = (function() {
       + '<button class="btn btn-purple btn-sm" id="hFuSend-' + id + '"><i class="fas fa-paper-plane"></i></button>'
       + '</div>'
       + '<div class="followup-note">Contextual AI answers based on this analysis</div></div>';
+    
+    // Render existing chat history if any
+    var chatContainer = container.querySelector('#hChat-' + id);
+    if (chatContainer && entry.chat && entry.chat.length > 0) {
+      entry.chat.forEach(function(msg) {
+        var m = document.createElement('div');
+        m.className = 'chat-msg ' + msg.role;
+        if (msg.role === 'ai' && typeof marked !== 'undefined') { m.innerHTML = marked.parse(msg.text); }
+        else { m.textContent = msg.text; }
+        chatContainer.appendChild(m);
+      });
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
     // Attach event listeners
     var inp = document.getElementById('hFuInput-' + id);
     var btn = document.getElementById('hFuSend-' + id);
@@ -81,5 +106,5 @@ var History = (function() {
     document.getElementById('histDetailModal').classList.add('active');
   }
   function closeDetail() { document.getElementById('histDetailModal').classList.remove('active'); }
-  return { save: save, remove: remove, getAll: getAll, updateBadge: updateBadge, filter: filter, render: render, openDetail: openDetail, closeDetail: closeDetail };
+  return { save: save, remove: remove, getAll: getAll, updateBadge: updateBadge, filter: filter, render: render, openDetail: openDetail, closeDetail: closeDetail, addChat: addChat };
 })();

@@ -181,16 +181,21 @@ var FollowUp = (function() {
     if (!el) return null;
     var m = document.createElement('div');
     m.className = 'chat-msg ' + role;
-    m.textContent = text;
+    if (role === 'ai' && typeof marked !== 'undefined') {
+      m.innerHTML = marked.parse(text);
+    } else {
+      m.textContent = text;
+    }
     el.appendChild(m);
     el.scrollTop = el.scrollHeight;
     return m;
   }
-  function _send(q, chatId, inputId, context) {
+  function _send(q, chatId, inputId, context, histId) {
     var input = document.getElementById(inputId);
     if (!input || !q) return;
     input.value = '';
     _addMsg(chatId, q, 'user');
+    if (histId && typeof History !== 'undefined') History.addChat(histId, {role: 'user', text: q});
     var typing = _addMsg(chatId, 'Thinking...', 'ai');
     fetch('/tools/follow_up', {
       method:'POST',
@@ -199,7 +204,15 @@ var FollowUp = (function() {
     })
     .then(function(res) { return res.json(); })
     .then(function(data) {
-      if (typing) typing.textContent = data.success ? data.data.answer : 'Could not get a response.';
+      if (typing) {
+        if (data.success) {
+          if (typeof marked !== 'undefined') { typing.innerHTML = marked.parse(data.data.answer); }
+          else { typing.textContent = data.data.answer; }
+          if (histId && typeof History !== 'undefined') History.addChat(histId, {role: 'ai', text: data.data.answer});
+        } else {
+          typing.textContent = 'Could not get a response.';
+        }
+      }
     })
     .catch(function() {
       if (typing) typing.textContent = 'Connection failed. Please try again.';
@@ -223,7 +236,7 @@ var FollowUp = (function() {
     var entry = null;
     for (var i = 0; i < entries.length; i++) { if (entries[i].id == histId) { entry = entries[i]; break; } }
     var ctx = entry ? { token: { symbol: entry.symbol }, markdown: entry.markdown } : {};
-    _send(q, 'hChat-' + histId, 'hFuInput-' + histId, ctx);
+    _send(q, 'hChat-' + histId, 'hFuInput-' + histId, ctx, histId);
   }
   return { askAnalyze: askAnalyze, askHistory: askHistory };
 })();
