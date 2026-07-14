@@ -243,11 +243,36 @@ var Payment = (function() {
     document.getElementById('paymentModal').classList.add('active');
   }
 
-  function confirm() {
+  async function confirm() {
     var btn = document.getElementById('btnConfirmPay');
-    if (btn) { btn.disabled = true; btn.innerHTML = '<span class="loader" style="width:13px;height:13px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:7px"></span> Signing...'; }
+    if (btn) { btn.disabled = true; btn.innerHTML = '<span class="loader" style="width:13px;height:13px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:7px"></span> Awaiting wallet...'; }
+    
+    let signatureSuccess = false;
+    if (window.ethereum) {
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const account = accounts[0];
+        const nonceEl = document.getElementById('paymentNonce');
+        const msg = "Prism AI Authorization\n\nAuthorise payment for Full AI Analysis Report.\n\nNonce: " + (nonceEl ? nonceEl.textContent : _genNonce());
+        // Convert string to hex for personal_sign
+        const msgHex = '0x' + Array.from(new TextEncoder().encode(msg)).map(b => b.toString(16).padStart(2, '0')).join('');
+        
+        await window.ethereum.request({
+          method: 'personal_sign',
+          params: [msgHex, account]
+        });
+        signatureSuccess = true;
+      } catch (err) {
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-signature"></i> Sign &amp; Authorise'; }
+        console.error('Wallet signature failed/cancelled:', err);
+        return; // Stop flow if they rejected
+      }
+    }
+
     var vi = document.getElementById('paymentViewInitial');
     var vl = document.getElementById('paymentViewLoading');
+    const initialDelay = signatureSuccess ? 0 : 800; // Skip fake delay if they did a real sign
+    
     setTimeout(() => {
       if (vi) vi.classList.add('hidden');
       if (vl) vl.classList.remove('hidden');
@@ -256,7 +281,7 @@ var Payment = (function() {
         document.getElementById('paymentModal').classList.remove('active');
         if (_cb) { var c = _cb; _cb = null; c(); }
       }, 1200);
-    }, 800);
+    }, initialDelay);
   }
 
   function cancel() {
