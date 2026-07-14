@@ -7,7 +7,7 @@ var Pulse = (function() {
     _timer = setInterval(_load, 60000);
   }
   function _load() {
-    fetch('/api/pulse')
+    fetch('/tools/pulse')
       .then(function(res) { return res.json(); })
       .then(function(data) {
         if (!data.success) throw new Error(data.error || 'Failed');
