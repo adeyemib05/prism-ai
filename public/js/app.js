@@ -26,13 +26,13 @@ function _goAnalyze(sym) {
 }
 
 var Analyze = (function() {
-  var _sym = '', _report = null, _fuCount = 0;
+  var _sym = '', _report = null, _fuCount = 0, _currentHistId = null;
 
   function run() {
     var q = (document.getElementById('analyzeInput') || {}).value || '';
     var query = q.trim();
     if (!query) return;
-    _sym = query; _fuCount = 0; _report = null;
+    _sym = query; _fuCount = 0; _report = null; _currentHistId = null;
     var qcEl = document.getElementById('qcResult');
     var rpEl = document.getElementById('reportResult');
     var ub = document.getElementById('unlockBanner');
@@ -114,7 +114,7 @@ var Analyze = (function() {
       _report = data.data;
       _renderReport(data.data);
       if (typeof History !== 'undefined') {
-        History.save({
+        _currentHistId = History.save({
           symbol: (data.data.token||{}).symbol || _sym,
           name: (data.data.token||{}).name || _sym,
           verdict: (data.data.trade||{}).verdict || 'WATCH',
@@ -153,8 +153,8 @@ var Analyze = (function() {
   function getReport() { return _report; }
   function getSymbol() { return _sym; }
   function getFuCount() { return _fuCount; }
-  function incFu() { _fuCount++; }
-  return { run: run, unlock: unlock, getReport: getReport, getSymbol: getSymbol, getFuCount: getFuCount, incFu: incFu };
+  function getHistId() { return _currentHistId; }
+  return { run: run, unlock: unlock, getReport: getReport, getSymbol: getSymbol, getFuCount: getFuCount, incFu: incFu, getHistId: getHistId };
 })();
 
 var Payment = (function() {
@@ -223,9 +223,10 @@ var FollowUp = (function() {
     var q = input ? input.value.trim() : '';
     if (!q) return;
     var count = Analyze.getFuCount();
+    var histId = Analyze.getHistId();
     if (count > 0 && !Auth.canPay()) { Auth.openModal(); return; }
-    if (count > 0) { Payment.request(0.10, 'Follow-up Question', function() { _send(q, 'aChat', 'aFuInput', Analyze.getReport()); }); return; }
-    _send(q, 'aChat', 'aFuInput', Analyze.getReport());
+    if (count > 0) { Payment.request(0.10, 'Follow-up Question', function() { _send(q, 'aChat', 'aFuInput', Analyze.getReport(), histId); }); return; }
+    _send(q, 'aChat', 'aFuInput', Analyze.getReport(), histId);
     Analyze.incFu();
   }
   function askHistory(histId) {

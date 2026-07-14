@@ -10,6 +10,7 @@ var History = (function() {
     if (all.length > 50) all.pop();
     localStorage.setItem(_key(), JSON.stringify(all));
     updateBadge();
+    return entry.id;
   }
   function remove(id) {
     localStorage.setItem(_key(), JSON.stringify(getAll().filter(function(e) { return e.id !== id; })));
