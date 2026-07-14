@@ -103,3 +103,26 @@ export async function getOKXMarketData(symbol: string): Promise<NormalizedTokenD
     rawOKX: ticker
   };
 }
+
+export async function getMarketPulse() {
+  try {
+    const response = await api.get('/market/tickers?instType=SPOT');
+    if (response.data && response.data.data) {
+      const valid = response.data.data.filter((t: any) => t.instId.endsWith('-USDT') && parseFloat(t.volCcy24h) > 100000);
+      const mapped = valid.map((t: any) => ({
+        symbol: t.instId.split('-')[0],
+        price: parseFloat(t.last),
+        change: parseFloat(t.open24h) > 0 ? ((parseFloat(t.last) - parseFloat(t.open24h)) / parseFloat(t.open24h)) * 100 : 0,
+      }));
+      mapped.sort((a: any, b: any) => b.change - a.change);
+      return {
+        gainers: mapped.slice(0, 10),
+        losers: mapped.slice(-10).reverse()
+      };
+    }
+    return { gainers: [], losers: [] };
+  } catch(e) {
+    return { gainers: [], losers: [] };
+  }
+}
+

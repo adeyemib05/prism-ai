@@ -1,73 +1,277 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prism | Token Intelligence</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prism | Token Intelligence</title>
+  <meta name="description" content="Put your token through Prism. Institutional-grade crypto intelligence in 30 seconds.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class="background-effects">
-        <div class="glow-orb orb-1"></div>
-        <div class="glow-orb orb-2"></div>
+<div class="bg-mesh"></div>
+<div id="app">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="topbar-brand" onclick="navigate('analyze')">
+      <img src="logo.svg" alt="Prism">
+      <span class="brand-name">Prism</span>
     </div>
-
-    <div class="container">
-        <header>
-            <img src="logo.svg" alt="Prism Logo" class="logo">
-            <h1>Prism</h1>
-            <p class="tagline">Raw data enters. Five clear intelligence signals exit.</p>
-            <span class="badge">Powered by OKX & Groq</span>
-        </header>
-
-        <main>
-            <div class="search-container glass-panel">
-                <input type="text" id="tokenInput" placeholder="Enter symbol (e.g. BTC) or contract address (0x...)" autocomplete="off">
-                <button id="searchBtn" class="btn-primary"><i class="fas fa-search"></i> Analyze</button>
-            </div>
-
-            <div class="results-grid">
-                <!-- Quick Check Panel -->
-                <div class="panel glass-panel" id="quickCheckPanel">
-                    <div class="panel-header">
-                        <h2><i class="fas fa-bolt"></i> Quick Check</h2>
-                        <span class="price-tag free">FREE</span>
-                    </div>
-                    <div class="panel-body" id="quickCheckResult">
-                        <div class="placeholder-text">Enter a token to get a free risk snapshot.</div>
-                    </div>
-                </div>
-
-                <!-- Full Report Panel -->
-                <div class="panel glass-panel premium-glow" id="fullReportPanel">
-                    <div class="panel-header">
-                        <h2><i class="fas fa-robot"></i> Full AI Strategy</h2>
-                        <span class="price-tag premium">$0.50 USDT</span>
-                    </div>
-                    <div class="panel-body" id="fullReportResult">
-                        <div class="placeholder-text">Unlock deep market analysis, risk evaluation, and an AI-driven trade plan.</div>
-                        <button id="unlockBtn" class="btn-premium hidden"><i class="fas fa-lock-open"></i> Pay & Unlock Report</button>
-                    </div>
-                </div>
-            </div>
-        </main>
+    <div class="topbar-search">
+      <i class="fas fa-search ts-icon"></i>
+      <input type="text" id="topbarInput" placeholder="Search any token or contract address..." autocomplete="off">
+      <span class="search-hint">&#8629;</span>
     </div>
+    <div class="topbar-right">
+      <span class="topbar-badge">OKX x Groq</span>
+      <button class="btn-connect" id="connectBtn" onclick="Auth.openModal()">
+        <span class="wallet-dot"></span>
+        <span id="connectLabel">Connect Wallet</span>
+      </button>
+    </div>
+  </header>
 
-    <!-- Payment Modal -->
-    <div class="modal" id="paymentModal">
-        <div class="modal-content glass-panel">
-            <h3><i class="fas fa-wallet"></i> OKX Web3 Wallet</h3>
-            <p>Signature Request: Authorize payment of <strong>$0.50 USDT</strong> for Prism Premium Report.</p>
-            <div class="modal-actions">
-                <button id="cancelPaymentBtn" class="btn-secondary">Reject</button>
-                <button id="confirmPaymentBtn" class="btn-primary">Sign & Pay</button>
-            </div>
+  <!-- BODY -->
+  <div class="body-layout">
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+      <span class="sidebar-section-label">Intelligence</span>
+      <button class="nav-item active" data-view="analyze" onclick="navigate('analyze')">
+        <i class="fas fa-magnifying-glass-chart"></i> Analyze Token
+      </button>
+      <button class="nav-item" data-view="history" onclick="navigate('history')">
+        <i class="fas fa-clock-rotate-left"></i> Analysis History
+        <span class="nav-badge" id="historyBadge">0</span>
+      </button>
+      <button class="nav-item" data-view="watchlist" onclick="navigate('watchlist')">
+        <i class="fas fa-star"></i> Watchlist
+        <span class="nav-badge" id="watchlistBadge">0</span>
+      </button>
+      <div class="sidebar-divider"></div>
+      <span class="sidebar-section-label">Tools</span>
+      <button class="nav-item" data-view="portfolio" onclick="navigate('portfolio')">
+        <i class="fas fa-layer-group"></i> Portfolio Scanner
+      </button>
+      <button class="nav-item" data-view="compare" onclick="navigate('compare')">
+        <i class="fas fa-code-compare"></i> Token Compare
+      </button>
+      <button class="nav-item" data-view="pulse" onclick="navigate('pulse')">
+        <i class="fas fa-chart-line"></i> Market Pulse
+      </button>
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-user hidden" id="sidebarUser">
+        <div class="user-avatar" id="sidebarAvatar">?</div>
+        <div>
+          <div class="su-name" id="sidebarName">Guest</div>
+          <div class="su-role" id="sidebarRole">View-only</div>
         </div>
-    </div>
+      </div>
+    </nav>
 
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="js/app.js"></script>
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+      <!-- ANALYZE VIEW -->
+      <div class="view active" id="view-analyze">
+        <div class="view-header">
+          <h2><i class="fas fa-magnifying-glass-chart"></i> Token Analysis</h2>
+          <p>Enter any symbol or contract address to get institutional-grade intelligence.</p>
+        </div>
+        <div class="analyze-search">
+          <input type="text" class="analyze-input" id="analyzeInput" placeholder="e.g. BTC, ETH, SOL or paste a contract address..." autocomplete="off">
+          <button class="btn btn-primary" id="analyzeBtn" onclick="Analyze.run()">
+            <i class="fas fa-bolt"></i> Analyze
+          </button>
+        </div>
+        <div class="panel" id="qcPanel">
+          <div class="panel-header">
+            <span class="ph-title"><i class="fas fa-bolt"></i> Quick Check</span>
+            <span style="font-size:0.72rem;color:var(--accent-primary);background:rgba(0,194,255,0.08);border:1px solid rgba(0,194,255,0.15);padding:0.15rem 0.5rem;border-radius:20px;font-weight:600">FREE</span>
+          </div>
+          <div class="panel-body" id="qcResult">
+            <div class="empty-state">
+              <div class="es-icon"><i class="fas fa-magnifying-glass"></i></div>
+              <h3>Enter a token to begin</h3>
+              <p>Get a free risk snapshot for any crypto asset in seconds.</p>
+            </div>
+          </div>
+        </div>
+        <div class="panel" id="reportPanel">
+          <div class="panel-header">
+            <span class="ph-title"><i class="fas fa-robot"></i> Full AI Strategy</span>
+            <span style="font-size:0.72rem;color:var(--accent-tertiary);background:rgba(123,97,255,0.1);border:1px solid rgba(123,97,255,0.2);padding:0.15rem 0.5rem;border-radius:20px;font-weight:600">$0.50 USDT</span>
+          </div>
+          <div class="panel-body" id="reportResult">
+            <div class="empty-state">
+              <div class="es-icon"><i class="fas fa-lock"></i></div>
+              <h3>Full analysis locked</h3>
+              <p>Run a Quick Check first, then unlock the complete AI trade strategy.</p>
+            </div>
+          </div>
+        </div>
+        <div class="unlock-banner hidden" id="unlockBanner">
+          <div class="unlock-banner-text">
+            <strong><i class="fas fa-robot"></i> Unlock Full AI Strategy</strong>
+            <p>Risk Shield &middot; Market Structure &middot; Trade Plan with TP/SL levels</p>
+          </div>
+          <button class="btn btn-purple btn-sm" id="unlockBtn" onclick="Analyze.unlock()">
+            <i class="fas fa-lock-open"></i> Pay $0.50 USDT
+          </button>
+        </div>
+      </div>
+
+      <!-- HISTORY VIEW -->
+      <div class="view" id="view-history">
+        <div class="view-header">
+          <h2><i class="fas fa-clock-rotate-left"></i> Analysis History</h2>
+          <p>Your past paid analyses. Click any entry to re-read or ask follow-up questions.</p>
+        </div>
+        <input class="history-search" id="historySearch" type="text" placeholder="Search by token symbol..." oninput="History.filter(this.value)">
+        <div class="history-list" id="historyList"></div>
+      </div>
+
+      <!-- WATCHLIST VIEW -->
+      <div class="view" id="view-watchlist">
+        <div class="view-header">
+          <h2><i class="fas fa-star"></i> Watchlist</h2>
+          <p>Your pinned tokens. Click any card to run a fresh analysis.</p>
+        </div>
+        <div class="watchlist-grid" id="watchlistGrid"></div>
+      </div>
+
+      <!-- PORTFOLIO VIEW -->
+      <div class="view" id="view-portfolio">
+        <div class="view-header">
+          <h2><i class="fas fa-layer-group"></i> Portfolio Scanner</h2>
+          <p>Scan up to 5 tokens at once for a bundled AI report.</p>
+        </div>
+        <div class="portfolio-input-row">
+          <input type="text" class="portfolio-input" id="portfolioInput" placeholder="BTC, ETH, SOL, PEPE, ARB - comma separated">
+          <button class="btn btn-primary" onclick="Portfolio.scan()"><i class="fas fa-bolt"></i> Scan</button>
+        </div>
+        <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.75rem">Max 5 tokens &middot; $1.50 USDT per scan &middot; Requires wallet connection</div>
+        <div class="portfolio-results hidden" id="portfolioResults"></div>
+      </div>
+
+      <!-- COMPARE VIEW -->
+      <div class="view" id="view-compare">
+        <div class="view-header">
+          <h2><i class="fas fa-code-compare"></i> Token Compare</h2>
+          <p>Side-by-side comparison of any two tokens. Free feature.</p>
+        </div>
+        <div class="compare-inputs">
+          <input type="text" class="analyze-input" id="compareInputA" placeholder="Token A (e.g. BTC)">
+          <input type="text" class="analyze-input" id="compareInputB" placeholder="Token B (e.g. ETH)">
+        </div>
+        <button class="btn btn-primary mb-sm" onclick="Compare.run()"><i class="fas fa-bolt"></i> Compare</button>
+        <div id="compareResult"></div>
+      </div>
+
+      <!-- PULSE VIEW -->
+      <div class="view" id="view-pulse">
+        <div class="view-header">
+          <h2><i class="fas fa-chart-line"></i> Market Pulse</h2>
+          <p>Live OKX top gainers &amp; losers. Click any token to analyze it instantly. Auto-refreshes every 60s.</p>
+        </div>
+        <div class="pulse-grid" id="pulseGrid">
+          <div class="loading-state"><span class="loader"></span>&nbsp;Loading market data...</div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="Auth.closeModal()"><i class="fas fa-times"></i></button>
+    <h3><i class="fas fa-shield-halved" style="color:var(--accent-primary)"></i> Connect to Prism</h3>
+    <p class="modal-desc">Connect your wallet for full access including payments and analysis history. Email login is view-only.</p>
+    <button class="auth-option" onclick="Auth.connectOKX()">
+      <div class="ao-icon okx">OKX</div>
+      <div>OKX Wallet<span class="ao-sub">Recommended &middot; Supports payments</span></div>
+    </button>
+    <button class="auth-option" onclick="Auth.connectMetaMask()">
+      <div class="ao-icon meta">&#x1F98A;</div>
+      <div>MetaMask<span class="ao-sub">EVM wallets supported</span></div>
+    </button>
+    <div class="auth-divider">or continue with email</div>
+    <div class="auth-form">
+      <input type="email" id="authEmail" placeholder="your@email.com">
+      <input type="password" id="authPassword" placeholder="Password">
+      <button class="btn btn-secondary btn-full" onclick="Auth.loginEmail()">
+        <i class="fas fa-envelope"></i> Continue with Email
+        <span style="margin-left:auto;font-size:0.7rem;color:var(--text-muted);font-weight:400">View-only</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="paymentModal">
+  <div class="modal-box" style="max-width:360px;text-align:center">
+    <button class="modal-close" onclick="Payment.cancel()"><i class="fas fa-times"></i></button>
+    <h3><i class="fas fa-wallet" style="color:var(--accent-primary)"></i> Signature Request</h3>
+    <div class="payment-amount" id="paymentAmount">$0.50</div>
+    <p class="payment-detail" id="paymentDetail">Authorise payment of $0.50 USDT for Prism Full Analysis Report.</p>
+    <div class="payment-actions">
+      <button class="btn btn-secondary btn-full" onclick="Payment.cancel()">Reject</button>
+      <button class="btn btn-primary btn-full" onclick="Payment.confirm()"><i class="fas fa-signature"></i> Sign &amp; Pay</button>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY DETAIL MODAL -->
+<div class="modal-overlay" id="histDetailModal" style="align-items:flex-end">
+  <div class="modal-box" style="max-width:720px;width:96%;max-height:88vh;overflow-y:auto;border-radius:var(--radius-xl) var(--radius-xl) 0 0;margin:0 auto">
+    <button class="modal-close" onclick="History.closeDetail()"><i class="fas fa-times"></i></button>
+    <div id="histDetailContent"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/history.js"></script>
+<script src="js/watchlist.js"></script>
+<script src="js/app.js"></script>
+<script src="js/portfolio.js"></script>
+<script src="js/compare.js"></script>
+<script src="js/pulse.js"></script>
+<script>
+function navigate(viewId) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const view = document.getElementById('view-' + viewId);
+  if (view) view.classList.add('active');
+  document.querySelectorAll('[data-view="' + viewId + '"]').forEach(n => n.classList.add('active'));
+  if (viewId === 'pulse') Pulse.init();
+  if (viewId === 'history') History.render();
+  if (viewId === 'watchlist') Watchlist.render();
+}
+document.addEventListener('DOMContentLoaded', () => {
+  Auth.init();
+  History.updateBadge();
+  Watchlist.updateBadge();
+  const ti = document.getElementById('topbarInput');
+  if (ti) ti.addEventListener('keypress', e => {
+    if (e.key === 'Enter') {
+      const q = e.target.value.trim();
+      if (!q) return;
+      navigate('analyze');
+      document.getElementById('analyzeInput').value = q;
+      Analyze.run();
+      e.target.value = '';
+    }
+  });
+  const ai = document.getElementById('analyzeInput');
+  if (ai) ai.addEventListener('keypress', e => { if (e.key === 'Enter') Analyze.run(); });
+});
+</script>
 </body>
 </html>

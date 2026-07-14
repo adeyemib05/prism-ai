@@ -7,7 +7,7 @@ import path from 'path';
 import { config } from './config';
 
 // Import handlers and middleware
-import { getTools, handleQuickCheck, handleAnalyzeToken, handlePortfolioScan } from './mcp/handlers';
+import { getTools, handleQuickCheck, handleAnalyzeToken, handlePortfolioScan, handleFollowUp, handlePulse } from './mcp/handlers';
 import { requirePayment } from './middleware/payment';
 
 const app = express();
@@ -38,6 +38,8 @@ app.get('/tools', getTools);
 app.post('/tools/quick_check', handleQuickCheck);
 app.post('/tools/analyze_token', requirePayment(0.50), handleAnalyzeToken);
 app.post('/tools/portfolio_scan', requirePayment(1.50), handlePortfolioScan);
+app.post('/tools/follow_up', requirePayment(0.10), handleFollowUp);
+app.get('/api/pulse', handlePulse);
 
 app.use((req: Request, res: Response) => {
   res.status(404).json({ success: false, error: 'Route not found' });

@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { mcpTools } from './tools';
 import { buildQuickCheck, generateFullReport } from '../core/reportBuilder';
+import { callGroq } from '../ai/groqClient';
+import { getMarketPulse } from '../data/okxMarket';
 
 export function getTools(req: Request, res: Response) {
   res.json({
@@ -55,6 +57,28 @@ export async function handlePortfolioScan(req: Request, res: Response) {
         reports: successful
       }
     });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+export async function handlePulse(req: Request, res: Response) {
+  try {
+    const data = await getMarketPulse();
+    res.json({ success: true, data });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+export async function handleFollowUp(req: Request, res: Response) {
+  try {
+    const { question, context } = req.body;
+    if (!question) return res.status(400).json({ success: false, error: 'Question required' });
+    const prompt = 'Context:\n' + JSON.stringify(context) + '\n\nUser Question: ' + question;
+    const sys = 'You are an AI crypto analyst answering a follow-up question based on your previous report context. Be concise and professional.';
+    const answer = await callGroq(prompt, sys, 500);
+    res.json({ success: true, data: { answer } });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });
   }
