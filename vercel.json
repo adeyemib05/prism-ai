@@ -3,6 +3,8 @@
   "rewrites": [
     { "source": "/tools/(.*)", "destination": "/api/index" },
     { "source": "/tools", "destination": "/api/index" },
-    { "source": "/health", "destination": "/api/index" }
+    { "source": "/health", "destination": "/api/index" },
+    { "source": "/.well-known/agent.json", "destination": "/api/index" },
+    { "source": "/api/(.*)", "destination": "/api/index" }
   ]
 }
