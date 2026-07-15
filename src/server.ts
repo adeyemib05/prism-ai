@@ -91,6 +91,13 @@ app.get('/tools/pulse', handlePulse);
 // This is the canonical endpoint registered on OKX marketplace as Agent #5781.
 // OKX A2MCP agents call POST /api/analyze with the token symbol in the body.
 // They first receive a 402 challenge, pay via x402 on XLayer, then replay with X-Payment header.
+app.get('/api/analyze', (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: 'Prism AI A2MCP Endpoint is active. Please send a POST request with {"symbol": "..."} to run an analysis.',
+    documentation: 'https://prism-ai-theta.vercel.app/.well-known/agent.json'
+  });
+});
 app.post('/api/analyze', requirePayment(0.50), handleAnalyzeToken);
 app.post('/api/quick_check', handleQuickCheck);
 app.get('/api/pulse', handlePulse);
